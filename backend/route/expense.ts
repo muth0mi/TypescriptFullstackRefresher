@@ -15,22 +15,10 @@ type Expense = z.infer<typeof expenseSchema>;
 
 const expenses: Expense[] = [
   {
-    id: "1",
+    id: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e",
     amount: 100,
     category: "Food",
     description: "Grocery shopping",
-  },
-  {
-    id: "2",
-    amount: 50,
-    category: "Transportation",
-    description: "Gas",
-  },
-  {
-    id: "3",
-    amount: 200,
-    category: "Entertainment",
-    description: "Concert tickets",
   },
 ];
 
