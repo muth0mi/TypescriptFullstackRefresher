@@ -16,7 +16,7 @@ const apiRoutes = app.basePath("/api").route("/expense", expenseRoute);
 app.doc31("/openapi", (c) => ({
   openapi: "3.1.0",
   info: {
-    title: "Expense Tracker API",
+    title: "Expense Tracker",
     version: "1.0.0",
     description: "API for tracking and managing expenses",
   },

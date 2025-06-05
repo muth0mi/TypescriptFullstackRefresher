@@ -1,5 +1,4 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import "zod-openapi/extend";
 
 const errorSchema = z.object({
   message: z
