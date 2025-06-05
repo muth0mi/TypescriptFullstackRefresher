@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { describeRoute } from "hono-openapi";
+import { resolver } from "hono-openapi/zod";
+
+const totalsSchema = z.object({
+  expenses: z.number().describe("Total expenses"),
+});
 
 const expenseSchema = z.object({
   id: z.string().uuid(),
@@ -23,18 +29,72 @@ const expenses: Expense[] = [
 ];
 
 export const expenseRoute = new Hono()
-  .get("/totals", (c) => {
-    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-    return c.json({ expenses: total });
-  })
-  .get("/", (c) => {
-    return c.json({ expenses: expenses });
-  })
-  .post("/", zValidator("json", createExpenseSchema), (c) => {
-    const expense = c.req.valid("json");
-    expenses.push({ id: expenses.length.toString(), ...expense });
-    return c.json(expense, 201);
-  })
+  .get(
+    "/totals",
+    describeRoute({
+      description: "Gets the total expenses",
+      responses: {
+        200: {
+          description: "Successful response",
+          content: { "application/json": { schema: resolver(totalsSchema) } },
+        },
+      },
+    }),
+    (c) => {
+      const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+      return c.json({ expenses: total });
+    },
+  )
+  .get(
+    "/",
+    describeRoute({
+      description: "Gets all expenses",
+      responses: {
+        200: {
+          description: "Successful response",
+          content: {
+            "application/json": { schema: resolver(z.array(expenseSchema)) },
+          },
+        },
+      },
+    }),
+    (c) => {
+      return c.json({ expenses: expenses });
+    },
+  )
+  .post(
+    "/",
+    describeRoute({
+      description: "Creates a new expense",
+      requestBody: {
+        description: "Expense to create",
+        content: {
+          "application/json": {
+            schema: createExpenseSchema,
+            example: {
+              amount: 100,
+              category: "Food",
+              description: "Example expense",
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "Successful response",
+          content: {
+            "application/json": { schema: resolver(expenseSchema) },
+          },
+        },
+      },
+    }),
+    zValidator("json", createExpenseSchema),
+    (c) => {
+      const expense = c.req.valid("json");
+      expenses.push({ id: expenses.length.toString(), ...expense });
+      return c.json(expense, 201);
+    },
+  )
   .get("/:id", (c) => {
     const { id } = c.req.param();
     const expense = expenses.find((e) => e.id === id);
