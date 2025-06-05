@@ -15,11 +15,12 @@ FROM base AS backend
 COPY backend/bun.lock backend/package.json ./
 RUN bun install --ci
 COPY backend/. .
+RUN bun run build
 
 # Deploy
 FROM base
 COPY --from=frontend /app/dist frontend/dist
-COPY --from=backend /app backend
+COPY --from=backend /app/out backend
 WORKDIR /app/backend
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD [ "bun", "index.js" ]
