@@ -177,6 +177,6 @@ expenseRoute
         return c.notFound();
       }
       expenses.splice(index, 1);
-      return c.json(204);
+      return c.body(null, 204);
     },
   );

@@ -5,15 +5,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 function App() {
   const [totalExpenses, setTotalExpenses] = useState(0);
 
   useEffect(() => {
-    fetch("/api/expense/totals")
-      .then((response) => response.json())
-      .then((total) => setTotalExpenses(total.expenses));
+    async function fetchTotal() {
+      const res = await api.expense["totals"].$get();
+      const total = await res.json();
+      setTotalExpenses(total.expenses);
+    }
+    fetchTotal();
   }, []);
 
   return (

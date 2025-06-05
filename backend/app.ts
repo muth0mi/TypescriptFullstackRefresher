@@ -10,7 +10,7 @@ const app = new OpenAPIHono();
 app.use("*", logger());
 
 // Initialize routes
-app.route("/api/expense", expenseRoute);
+const apiRoutes = app.basePath("/api").route("/expense", expenseRoute);
 
 // Serve OpenAPI specification
 app.doc("/openapi", {
@@ -34,3 +34,4 @@ app.use("*", serveStatic({ root: "../frontend/dist" }));
 app.get("*", serveStatic({ path: "../frontend/dist/index.html" }));
 
 export default app;
+export type ApiRoutes = typeof apiRoutes;
