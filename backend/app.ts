@@ -26,7 +26,13 @@ app.get(
     },
   }),
 );
-app.get("/doc", Scalar({ url: "/openapi", theme: "saturn", layout: "modern" }));
+app.get(
+  "/doc",
+  Scalar({
+    url: "/openapi",
+    theme: "saturn",
+  }),
+);
 
 // Serve static files from the frontend directory
 app.use("*", serveStatic({ root: "../frontend/dist" }));

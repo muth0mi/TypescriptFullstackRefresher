@@ -119,17 +119,11 @@ export const expenseRoute = new Hono()
       parameters: [
         {
           name: "id",
-          // description: "The expense ID",
           in: "path",
           required: true,
+          schema: resolver(expenseSchema.pick({ id: true })),
+          // description: "The expense ID",
           // example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e",
-          schema: resolver(
-            expenseSchema.pick({ id: true }).shape.id,
-            // z
-            //   .string()
-            //   .uuid()
-            //   .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
-          ),
         },
       ],
       responses: {
