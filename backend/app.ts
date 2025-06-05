@@ -10,7 +10,7 @@ const app = new OpenAPIHono();
 app.use("*", logger());
 
 // Initialize routes
-const apiRoutes = app.basePath("/api").route("/expense", expenseRoute);
+const apiRoutes = app.route("/api/expense", expenseRoute);
 
 // Serve OpenAPI specification
 app.doc31("/openapi", (c) => ({
