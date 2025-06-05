@@ -51,9 +51,7 @@ const expenses: Expense[] = [
   },
 ];
 
-export const expenseRoute = new OpenAPIHono();
-
-expenseRoute
+export const expenseRoute = new OpenAPIHono()
   .openapi(
     createRoute({
       path: "/totals",

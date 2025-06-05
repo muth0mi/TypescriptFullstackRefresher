@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
+import { authRoute } from "./route/auth";
 import { expenseRoute } from "./route/expense";
 
 const app = new OpenAPIHono();
@@ -10,7 +11,9 @@ const app = new OpenAPIHono();
 app.use("*", logger());
 
 // Initialize routes
-const apiRoutes = app.route("/api/expense", expenseRoute);
+const apiRoutes = app
+  .route("/api/expense", expenseRoute)
+  .route("/api/auth", authRoute);
 
 // Serve OpenAPI specification
 app.doc31("/api/openapi", (c) => ({
