@@ -6,20 +6,35 @@ import { z } from "zod";
 import "zod-openapi/extend";
 
 const totalsSchema = z.object({
-  expenses: z.number().describe("Total expenses").openapi({ example: 1100 }),
+  expenses: z
+    .number()
+    .positive()
+    .describe("Total expenses")
+    .openapi({ example: 1100 }),
 });
 
 const expenseSchema = z.object({
   id: z
     .string()
     .uuid()
+    .describe("The ID of the expense")
     .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
-  amount: z.number().min(0).openapi({ example: 100 }),
-  category: z.string().min(1).max(50).openapi({ example: "Food" }),
+  amount: z
+    .number()
+    .min(0)
+    .describe("The amount of the expense")
+    .openapi({ example: 100 }),
+  category: z
+    .string()
+    .min(1)
+    .max(50)
+    .describe("The category of the expense")
+    .openapi({ example: "Food" }),
   description: z
     .string()
     .min(1)
     .max(100)
+    .describe("The description of the expense")
     .openapi({ example: "Grocery shopping" }),
 });
 
@@ -43,7 +58,7 @@ export const expenseRoute = new Hono()
       description: "Gets the total expenses",
       responses: {
         200: {
-          description: "Successful response",
+          description: "Totals",
           content: { "application/json": { schema: resolver(totalsSchema) } },
         },
       },
@@ -53,38 +68,20 @@ export const expenseRoute = new Hono()
       return c.json({ expenses: total });
     },
   )
-  .get(
-    "/",
-    describeRoute({
-      description: "Gets all expenses",
-      responses: {
-        200: {
-          description: "Successful response",
-          content: {
-            "application/json": { schema: resolver(z.array(expenseSchema)) },
-          },
-        },
-      },
-    }),
-    (c) => {
-      return c.json({ expenses: expenses });
-    },
-  )
   .post(
     "/",
     describeRoute({
-      description: "Creates a new expense",
+      description: "Create a new expense",
       requestBody: {
         description: "Expense to create",
+        required: true,
         content: {
-          "application/json": {
-            schema: createExpenseSchema,
-          },
+          "application/json": { schema: resolver(createExpenseSchema) },
         },
       },
       responses: {
         201: {
-          description: "Successful response",
+          description: "Created Expense",
           content: {
             "application/json": { schema: resolver(expenseSchema) },
           },
@@ -98,14 +95,64 @@ export const expenseRoute = new Hono()
       return c.json(expense, 201);
     },
   )
-  .get("/:id", (c) => {
-    const { id } = c.req.param();
-    const expense = expenses.find((e) => e.id === id);
-    if (!expense) {
-      return c.notFound();
-    }
-    return c.json(expense);
-  })
+  .get(
+    "/",
+    describeRoute({
+      description: "Gets all expenses",
+      responses: {
+        200: {
+          description: "Expenses",
+          content: {
+            "application/json": { schema: resolver(z.array(expenseSchema)) },
+          },
+        },
+      },
+    }),
+    (c) => {
+      return c.json({ expenses: expenses });
+    },
+  )
+  .get(
+    "/:id",
+    describeRoute({
+      description: "Get expense by ID",
+      parameters: [
+        {
+          name: "id",
+          // description: "The expense ID",
+          in: "path",
+          required: true,
+          // example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e",
+          schema: resolver(
+            expenseSchema.pick({ id: true }).shape.id,
+            // z
+            //   .string()
+            //   .uuid()
+            //   .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
+          ),
+        },
+      ],
+      responses: {
+        200: {
+          description: "Retrieved Expense",
+          content: {
+            "application/json": { schema: resolver(expenseSchema) },
+          },
+        },
+        404: {
+          description: "Expense Not Found",
+        },
+      },
+    }),
+    (c) => {
+      const { id } = c.req.param();
+      const expense = expenses.find((e) => e.id === id);
+      if (!expense) {
+        return c.notFound();
+      }
+      return c.json(expense);
+    },
+  )
   .delete("/:id", (c) => {
     const { id } = c.req.param();
     const index = expenses.findIndex((e) => e.id === id);
