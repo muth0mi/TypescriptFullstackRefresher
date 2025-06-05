@@ -13,7 +13,7 @@ app.use("*", logger());
 const apiRoutes = app.route("/api/expense", expenseRoute);
 
 // Serve OpenAPI specification
-app.doc31("/openapi", (c) => ({
+app.doc31("/api/openapi", (c) => ({
   openapi: "3.1.0",
   info: {
     title: "Expense Tracker",
@@ -29,9 +29,9 @@ app.doc31("/openapi", (c) => ({
 }));
 
 app.get(
-  "/doc",
+  "/api/doc",
   Scalar({
-    url: "/openapi",
+    url: "/api/openapi",
     theme: "saturn",
   }),
 );
