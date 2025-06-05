@@ -23,6 +23,10 @@ const expenses: Expense[] = [
 ];
 
 export const expenseRoute = new Hono()
+  .get("/totals", (c) => {
+    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    return c.json({ expenses: total });
+  })
   .get("/", (c) => {
     return c.json({ expenses: expenses });
   })
@@ -47,8 +51,4 @@ export const expenseRoute = new Hono()
     }
     expenses.splice(index, 1);
     return c.json(204);
-  })
-  .get("totals", (c) => {
-    const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-    return c.json({ expenses: total });
   });
