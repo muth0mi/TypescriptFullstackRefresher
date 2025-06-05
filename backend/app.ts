@@ -1,4 +1,4 @@
-import { swaggerUI } from "@hono/swagger-ui";
+import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { openAPISpecs } from "hono-openapi";
 import { serveStatic } from "hono/bun";
@@ -26,7 +26,7 @@ app.get(
     },
   }),
 );
-app.get("/doc", swaggerUI({ url: "/openapi" }));
+app.get("/doc", Scalar({ url: "/openapi", theme: "saturn", layout: "modern" }));
 
 // Serve static files from the frontend directory
 app.use("*", serveStatic({ root: "../frontend/dist" }));
