@@ -1,18 +1,26 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
+import { z } from "zod";
+import "zod-openapi/extend";
 
 const totalsSchema = z.object({
-  expenses: z.number().describe("Total expenses"),
+  expenses: z.number().describe("Total expenses").openapi({ example: 1100 }),
 });
 
 const expenseSchema = z.object({
-  id: z.string().uuid(),
-  amount: z.number().min(0),
-  category: z.string().min(1).max(50),
-  description: z.string().min(1).max(100),
+  id: z
+    .string()
+    .uuid()
+    .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
+  amount: z.number().min(0).openapi({ example: 100 }),
+  category: z.string().min(1).max(50).openapi({ example: "Food" }),
+  description: z
+    .string()
+    .min(1)
+    .max(100)
+    .openapi({ example: "Grocery shopping" }),
 });
 
 const createExpenseSchema = expenseSchema.omit({ id: true });
@@ -71,11 +79,6 @@ export const expenseRoute = new Hono()
         content: {
           "application/json": {
             schema: createExpenseSchema,
-            example: {
-              amount: 100,
-              category: "Food",
-              description: "Example expense",
-            },
           },
         },
       },

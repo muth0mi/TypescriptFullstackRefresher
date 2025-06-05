@@ -1,9 +1,9 @@
+import { swaggerUI } from "@hono/swagger-ui";
 import { Hono } from "hono";
+import { openAPISpecs } from "hono-openapi";
+import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { expenseRoute } from "./route/expense";
-import { serveStatic } from "hono/bun";
-import { openAPISpecs } from "hono-openapi";
-import { swaggerUI } from "@hono/swagger-ui";
 
 const app = new Hono();
 
@@ -19,9 +19,9 @@ app.get(
   openAPISpecs(app, {
     documentation: {
       info: {
-        title: "Docs",
+        title: "Expense Tracker API",
         version: "1.0.0",
-        description: "Expense Tracker API",
+        description: "API for tracking and managing expenses",
       },
     },
   }),
