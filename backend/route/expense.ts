@@ -1,8 +1,6 @@
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
-import { z } from "zod";
 import "zod-openapi/extend";
 
 const totalsSchema = z.object({
@@ -38,8 +36,6 @@ const expenseSchema = z.object({
     .openapi({ example: "Grocery shopping" }),
 });
 
-const createExpenseSchema = expenseSchema.omit({ id: true });
-
 type Expense = z.infer<typeof expenseSchema>;
 
 const expenses: Expense[] = [
@@ -51,7 +47,37 @@ const expenses: Expense[] = [
   },
 ];
 
-export const expenseRoute = new Hono()
+export const expenseRoute = new OpenAPIHono();
+
+const createExpenseRoute = createRoute({
+  path: "/",
+  method: "post",
+  request: {
+    body: {
+      required: true,
+      content: {
+        "application/json": { schema: expenseSchema.omit({ id: true }) },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Expense Created Successfully",
+      content: {
+        "application/json": { schema: expenseSchema },
+      },
+    },
+  },
+});
+
+expenseRoute.openapi(createExpenseRoute, (c) => {
+  const data = c.req.valid("json");
+  const expense = { id: expenses.length.toString(), ...data };
+  expenses.push(expense);
+  return c.json(expense, 201);
+});
+
+expenseRoute
   .get(
     "/totals",
     describeRoute({
@@ -66,33 +92,6 @@ export const expenseRoute = new Hono()
     (c) => {
       const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
       return c.json({ expenses: total });
-    },
-  )
-  .post(
-    "/",
-    describeRoute({
-      description: "Create a new expense",
-      requestBody: {
-        description: "Expense to create",
-        required: true,
-        content: {
-          "application/json": { schema: resolver(createExpenseSchema) },
-        },
-      },
-      responses: {
-        201: {
-          description: "Created Expense",
-          content: {
-            "application/json": { schema: resolver(expenseSchema) },
-          },
-        },
-      },
-    }),
-    zValidator("json", createExpenseSchema),
-    (c) => {
-      const expense = c.req.valid("json");
-      expenses.push({ id: expenses.length.toString(), ...expense });
-      return c.json(expense, 201);
     },
   )
   .get(

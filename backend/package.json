@@ -17,6 +17,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@hono/zod-openapi": "^0.19.8",
     "hono": "^4.7.11",
     "hono-openapi": "^0.4.8",
     "zod": "^3.25.51",
