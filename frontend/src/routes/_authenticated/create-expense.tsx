@@ -25,7 +25,7 @@ function CreateExpense() {
   });
 
   return (
-    <div className="p-2">
+    <div>
       <h2>Create Expense</h2>
 
       <form

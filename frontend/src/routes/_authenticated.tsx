@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { userQueryOptions } from "@/lib/api";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
@@ -17,9 +18,13 @@ function Authenticated() {
   const { user } = Route.useRouteContext();
   if (user) return <Outlet />;
   return (
-    <div className="p-2 flex flex-col gap-2">
-      <a href="/api/auth/login">Login</a>
-      <a href="/api/auth/register">Register</a>
+    <div className="flex flex-col gap-2 max-w-lg m-auto">
+      <Button>
+        <a href="/api/auth/login">Login</a>
+      </Button>
+      <Button variant="secondary">
+        <a href="/api/auth/register">Register</a>
+      </Button>
     </div>
   );
 }

@@ -29,7 +29,7 @@ function Expenses() {
   });
 
   return (
-    <Table className="p-2 max-w-3xl m-auto">
+    <Table className="max-w-3xl m-auto">
       <TableCaption>A list of your expenses.</TableCaption>
       <TableHeader>
         <TableRow>
