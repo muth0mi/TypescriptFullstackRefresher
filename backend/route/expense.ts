@@ -1,4 +1,5 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { userMiddleware } from "../kinde";
 
 const errorSchema = z.object({
   message: z
@@ -56,6 +57,7 @@ export const expenseRoute = new OpenAPIHono()
     createRoute({
       path: "/totals",
       method: "get",
+      middleware: [userMiddleware] as const,
       description: "Fetch Totals",
       responses: {
         200: {
@@ -73,6 +75,7 @@ export const expenseRoute = new OpenAPIHono()
     createRoute({
       path: "/",
       method: "post",
+      middleware: [userMiddleware] as const,
       description: "Create a New Expense",
       request: {
         body: {
@@ -100,6 +103,7 @@ export const expenseRoute = new OpenAPIHono()
     createRoute({
       path: "/",
       method: "get",
+      middleware: [userMiddleware] as const,
       description: "Fetch All Expenses",
       responses: {
         200: {
@@ -116,6 +120,7 @@ export const expenseRoute = new OpenAPIHono()
     createRoute({
       path: "/{id}",
       method: "get",
+      middleware: [userMiddleware] as const,
       description: "Fetch Expense By ID",
       request: {
         params: expenseSchema.pick({ id: true }),
@@ -144,6 +149,7 @@ export const expenseRoute = new OpenAPIHono()
     createRoute({
       path: "/{id}",
       method: "delete",
+      middleware: [userMiddleware] as const,
       description: "Delete Expense By ID",
       request: {
         params: expenseSchema.pick({ id: true }),

@@ -87,7 +87,7 @@ export const authRoute = new OpenAPIHono()
     createRoute({
       path: "/me",
       method: "get",
-      middleware: userMiddleware,
+      middleware: [userMiddleware] as const,
       description: "Retrieve My Profile",
       responses: {
         200: {
