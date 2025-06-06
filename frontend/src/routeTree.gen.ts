@@ -11,12 +11,18 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ProfileImport } from './routes/profile'
 import { Route as ExpensesImport } from './routes/expenses'
 import { Route as CreateExpenseImport } from './routes/create-expense'
-import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const ProfileRoute = ProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ExpensesRoute = ExpensesImport.update({
   id: '/expenses',
@@ -27,12 +33,6 @@ const ExpensesRoute = ExpensesImport.update({
 const CreateExpenseRoute = CreateExpenseImport.update({
   id: '/create-expense',
   path: '/create-expense',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,13 +53,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
     '/create-expense': {
       id: '/create-expense'
       path: '/create-expense'
@@ -74,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpensesImport
       parentRoute: typeof rootRoute
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -81,47 +81,47 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/create-expense': typeof CreateExpenseRoute
   '/expenses': typeof ExpensesRoute
+  '/profile': typeof ProfileRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/create-expense': typeof CreateExpenseRoute
   '/expenses': typeof ExpensesRoute
+  '/profile': typeof ProfileRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/create-expense': typeof CreateExpenseRoute
   '/expenses': typeof ExpensesRoute
+  '/profile': typeof ProfileRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/create-expense' | '/expenses'
+  fullPaths: '/' | '/create-expense' | '/expenses' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/create-expense' | '/expenses'
-  id: '__root__' | '/' | '/about' | '/create-expense' | '/expenses'
+  to: '/' | '/create-expense' | '/expenses' | '/profile'
+  id: '__root__' | '/' | '/create-expense' | '/expenses' | '/profile'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   CreateExpenseRoute: typeof CreateExpenseRoute
   ExpensesRoute: typeof ExpensesRoute
+  ProfileRoute: typeof ProfileRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   CreateExpenseRoute: CreateExpenseRoute,
   ExpensesRoute: ExpensesRoute,
+  ProfileRoute: ProfileRoute,
 }
 
 export const routeTree = rootRoute
@@ -135,22 +135,22 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
         "/create-expense",
-        "/expenses"
+        "/expenses",
+        "/profile"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/about": {
-      "filePath": "about.tsx"
     },
     "/create-expense": {
       "filePath": "create-expense.tsx"
     },
     "/expenses": {
       "filePath": "expenses.tsx"
+    },
+    "/profile": {
+      "filePath": "profile.tsx"
     }
   }
 }
