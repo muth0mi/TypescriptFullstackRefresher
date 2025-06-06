@@ -2,7 +2,7 @@ import { userQueryOptions } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   component: Profile,
 });
 
@@ -16,7 +16,11 @@ function Profile() {
       ) : error ? (
         <p className="text-destructive">{error.message}</p>
       ) : (
-        <p>{JSON.stringify(data)}</p>
+        <div className="p-2 space-y-2">
+          <a href="/api/auth/logout">Logout</a>
+          <p>{data.name}</p>
+          <p>{data.email}</p>
+        </div>
       )}
     </div>
   );

@@ -12,7 +12,7 @@ import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
 });
 
@@ -39,39 +39,43 @@ function Expenses() {
           <TableHead className="text-right">Amount</TableHead>
         </TableRow>
       </TableHeader>
-      {isFetching ? (
-        Array(3)
-          .fill(0)
-          .map((_, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Skeleton className="h-4" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-4" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-4" />
-              </TableCell>
-              <TableCell className="text-right">
-                <Skeleton className="h-4" />
-              </TableCell>
-            </TableRow>
-          ))
-      ) : error ? (
-        <p className="text-destructive">{error.message}</p>
-      ) : (
-        <TableBody>
-          {data.map((expense, index) => (
+      <TableBody>
+        {isFetching ? (
+          Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton className="h-4" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-4" />
+                </TableCell>
+              </TableRow>
+            ))
+        ) : error ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-destructive">
+              {error.message}
+            </TableCell>
+          </TableRow>
+        ) : (
+          data?.map((expense, index) => (
             <TableRow key={index}>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>{expense.category}</TableCell>
               <TableCell>{expense.description}</TableCell>
               <TableCell className="text-right">{expense.amount}</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      )}
+          ))
+        )}
+      </TableBody>
     </Table>
   );
 }
