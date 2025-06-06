@@ -5,6 +5,8 @@ import {
 } from "@kinde-oss/kinde-typescript-sdk";
 import type { Context } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { createMiddleware } from "hono/factory";
+import type { User } from "./route/auth";
 
 export const kindeClient = createKindeServerClient(
   GrantType.AUTHORIZATION_CODE,
@@ -41,4 +43,23 @@ export const sessionManager = (c: Context): SessionManager => ({
       deleteCookie(c, key);
     });
   },
+});
+
+type Env = {
+  Variables: {
+    user: User;
+  };
+};
+
+export const userMiddleware = createMiddleware<Env>(async (c, next) => {
+  const status = await kindeClient.isAuthenticated(sessionManager(c));
+  if (!status) return c.json({ message: "Not authenticated" }, 401);
+  const profile = await kindeClient.getUserProfile(sessionManager(c));
+  c.set("user", {
+    id: profile.id,
+    name: `${profile.given_name} ${profile.family_name}`,
+    email: profile.email,
+    picture: profile.picture,
+  });
+  await next();
 });

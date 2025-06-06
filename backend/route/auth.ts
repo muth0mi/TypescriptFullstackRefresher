@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { kindeClient, sessionManager } from "../kinde";
+import { kindeClient, sessionManager, userMiddleware } from "../kinde";
 
 const errorSchema = z.object({
   message: z
@@ -9,13 +9,13 @@ const errorSchema = z.object({
 });
 
 const userSchema = z.object({
-  id: z.string(),
-  phone: z.string(),
-  email: z.string().email(),
-  picture: z.string().nullable(),
-  given_name: z.string(),
-  family_name: z.string(),
+  id: z.string().openapi({ example: "kp_913fe22e037e46bd9bb3" }),
+  name: z.string().openapi({ example: "Jane Doe" }),
+  email: z.string().email().openapi({ example: "email@test.com" }),
+  picture: z.string().nullable().openapi({ example: "https://test/img.jpg" }),
 });
+
+export type User = z.infer<typeof userSchema>;
 
 export const authRoute = new OpenAPIHono()
   .openapi(
@@ -87,6 +87,7 @@ export const authRoute = new OpenAPIHono()
     createRoute({
       path: "/me",
       method: "get",
+      middleware: userMiddleware,
       description: "Retrieve My Profile",
       responses: {
         200: {
@@ -100,9 +101,7 @@ export const authRoute = new OpenAPIHono()
       },
     }),
     async (c) => {
-      const status = await kindeClient.isAuthenticated(sessionManager(c));
-      if (!status) return c.json({ message: "Not authenticated" }, 401);
-      const user = await kindeClient.getUserProfile(sessionManager(c));
+      const user = c.var.user;
       return c.json(user, 200);
     },
   );
