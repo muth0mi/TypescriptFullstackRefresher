@@ -12,25 +12,24 @@ export const expenseSchema = z.object({
   id: z
     .string()
     .uuid()
-    .describe("The ID of the expense")
-    .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
+    .openapi({ example: "00000000-0000-0000-0000-000000000000" })
+    .describe("The ID of the expense"),
   amount: z
     .string()
+    .openapi({ example: "100.50" })
     .describe("The amount of the expense")
     .min(1, { message: "Amount must be at least 1 character" })
-    .max(10, { message: "Amount must be at most 10 characters" })
-    .regex(/^\d+(\.\d{1,2})?$/, { message: "Amount must be a valid currency" })
-    .openapi({ example: "100.50" }),
+    .regex(/^\d+(\.\d{1,2})?$/, { message: "Amount must be a valid currency" }),
   category: z
     .string()
+    .openapi({ example: "Food" })
     .describe("The category of the expense")
     .min(3, { message: "Category must be at least 3 characters" })
-    .max(50, { message: "Category must be at most 50 characters" })
-    .openapi({ example: "Food" }),
+    .max(50, { message: "Category must be at most 50 characters" }),
   description: z
     .string()
+    .openapi({ example: "Grocery shopping" })
     .describe("The description of the expense")
     .min(3, { message: "Description must be at least 3 character" })
-    .max(100, { message: "Description must be at most 100 characters" })
-    .openapi({ example: "Grocery shopping" }),
+    .max(100, { message: "Description must be at most 100 characters" }),
 });
