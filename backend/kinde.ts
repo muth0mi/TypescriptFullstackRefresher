@@ -6,7 +6,8 @@ import {
 import type { Context } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import type { User } from "./route/auth";
+import { userSchema } from "./schema/user";
+import { z } from "@hono/zod-openapi";
 
 export const kindeClient = createKindeServerClient(
   GrantType.AUTHORIZATION_CODE,
@@ -47,7 +48,7 @@ export const sessionManager = (c: Context): SessionManager => ({
 
 type Env = {
   Variables: {
-    user: User;
+    user: z.infer<typeof userSchema>;
   };
 };
 
