@@ -25,7 +25,7 @@ export const expenseRoute = new OpenAPIHono()
       const totals = await db
         .select({ expenses: sum(expenseTable.amount) })
         .from(expenseTable)
-        .where(eq(expenseTable.userId, user.id))
+        .where(eq(expenseTable.createdBy, user.id))
         .then((res) => res[0])
         .then((totals) => ({ expenses: Number(totals?.expenses) }));
       return c.json(totals, 200);
@@ -61,7 +61,7 @@ export const expenseRoute = new OpenAPIHono()
       const user = c.var.user;
       const expense = await db
         .insert(expenseTable)
-        .values({ ...data, userId: user.id })
+        .values({ ...data, createdBy: user.id })
         .returning()
         .then((res) => res[0])
         .then((expense) =>
@@ -99,7 +99,7 @@ export const expenseRoute = new OpenAPIHono()
       const expenses = await db
         .select()
         .from(expenseTable)
-        .where(eq(expenseTable.userId, user.id))
+        .where(eq(expenseTable.createdBy, user.id))
         .then((res) =>
           res.map((expense) => ({
             id: expense.id,
@@ -138,7 +138,9 @@ export const expenseRoute = new OpenAPIHono()
       const expense = await db
         .select()
         .from(expenseTable)
-        .where(and(eq(expenseTable.userId, user.id), eq(expenseTable.id, id)))
+        .where(
+          and(eq(expenseTable.createdBy, user.id), eq(expenseTable.id, id)),
+        )
         .then((res) => res[0])
         .then((expense) =>
           expense
@@ -181,7 +183,9 @@ export const expenseRoute = new OpenAPIHono()
       const user = c.var.user;
       const expense = await db
         .delete(expenseTable)
-        .where(and(eq(expenseTable.userId, user.id), eq(expenseTable.id, id)))
+        .where(
+          and(eq(expenseTable.createdBy, user.id), eq(expenseTable.id, id)),
+        )
         .returning()
         .then((res) => res[0]);
       if (!expense) {
