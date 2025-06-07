@@ -71,6 +71,7 @@ export const expenseRoute = new OpenAPIHono()
                 amount: expense.amount,
                 category: expense.category,
                 description: expense.description,
+                date: expense.date,
               }
             : null,
         );
@@ -100,11 +101,12 @@ export const expenseRoute = new OpenAPIHono()
         .from(expenseTable)
         .where(eq(expenseTable.userId, user.id))
         .then((res) =>
-          res.map((r) => ({
-            id: r.id,
-            amount: r.amount,
-            category: r.category,
-            description: r.description,
+          res.map((expense) => ({
+            id: expense.id,
+            amount: expense.amount,
+            category: expense.category,
+            description: expense.description,
+            date: expense.date,
           })),
         );
       return c.json(expenses, 200);
@@ -145,6 +147,7 @@ export const expenseRoute = new OpenAPIHono()
                 amount: expense.amount,
                 category: expense.category,
                 description: expense.description,
+                date: expense.date,
               }
             : null,
         );

@@ -36,6 +36,7 @@ function Expenses() {
           <TableHead>#</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Description</TableHead>
+          <TableHead>Date</TableHead>
           <TableHead className="text-right">Amount</TableHead>
         </TableRow>
       </TableHeader>
@@ -54,6 +55,9 @@ function Expenses() {
                 <TableCell>
                   <Skeleton className="h-4" />
                 </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4" />
+                </TableCell>
                 <TableCell className="text-right">
                   <Skeleton className="h-4" />
                 </TableCell>
@@ -61,7 +65,7 @@ function Expenses() {
             ))
         ) : error ? (
           <TableRow>
-            <TableCell colSpan={4} className="text-destructive">
+            <TableCell colSpan={5} className="text-destructive">
               {error.message}
             </TableCell>
           </TableRow>
@@ -71,6 +75,7 @@ function Expenses() {
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>{expense.category}</TableCell>
               <TableCell>{expense.description}</TableCell>
+              <TableCell>{expense.date}</TableCell>
               <TableCell className="text-right">{expense.amount}</TableCell>
             </TableRow>
           ))

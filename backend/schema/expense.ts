@@ -32,4 +32,13 @@ export const expenseSchema = z.object({
     .describe("The description of the expense")
     .min(3, { message: "Description must be at least 3 character" })
     .max(100, { message: "Description must be at most 100 characters" }),
+  date: z
+    .string()
+    .openapi({ example: "2023-01-01" })
+    .describe("The date of the expense")
+    .datetime({ message: "Date must be in YYYY-MM-DD format" })
+    .refine((date) => new Date(date).getTime() <= Date.now(), {
+      message: "Date cannot be in the future",
+    })
+    .nullable(),
 });
