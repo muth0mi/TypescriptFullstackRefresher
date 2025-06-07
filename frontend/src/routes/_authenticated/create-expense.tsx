@@ -17,6 +17,7 @@ function CreateExpense() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const form = useForm({
+    validators: { onChange: expenseSchema.omit({ id: true }) },
     defaultValues: {
       category: "",
       description: "",
@@ -55,7 +56,6 @@ function CreateExpense() {
       >
         <form.Field
           name="category"
-          validators={{ onChange: expenseSchema.shape.category }}
           children={(field) => (
             <div className="grid gap-3">
               <Label htmlFor={field.name}>Category</Label>
@@ -77,7 +77,6 @@ function CreateExpense() {
 
         <form.Field
           name="description"
-          validators={{ onChange: expenseSchema.shape.description }}
           children={(field) => (
             <div className="grid gap-3">
               <Label htmlFor={field.name}>Description</Label>
@@ -99,7 +98,6 @@ function CreateExpense() {
 
         <form.Field
           name="amount"
-          validators={{ onChange: expenseSchema.shape.amount }}
           children={(field) => (
             <div className="grid gap-3">
               <Label htmlFor={field.name}>Amount</Label>
@@ -121,7 +119,6 @@ function CreateExpense() {
 
         <form.Field
           name="date"
-          validators={{ onChange: expenseSchema.shape.date }}
           children={(field) => (
             <div className="grid gap-3">
               <Label htmlFor={field.name}>Date</Label>
