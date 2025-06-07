@@ -3,46 +3,8 @@ import { and, eq, sum } from "drizzle-orm";
 import { db } from "../db";
 import { expenseTable } from "../db/schema/expense";
 import { userMiddleware } from "../kinde";
-
-const errorSchema = z.object({
-  message: z
-    .string()
-    .describe("Error message")
-    .openapi({ example: "Some error message" }),
-});
-
-const totalsSchema = z.object({
-  expenses: z
-    .number()
-    .positive()
-    .describe("Total expenses")
-    .openapi({ example: 1100 }),
-});
-
-const expenseSchema = z.object({
-  id: z
-    .string()
-    .uuid()
-    .describe("The ID of the expense")
-    .openapi({ example: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e" }),
-  amount: z
-    .number()
-    .min(0)
-    .describe("The amount of the expense")
-    .openapi({ example: 100 }),
-  category: z
-    .string()
-    .min(1)
-    .max(50)
-    .describe("The category of the expense")
-    .openapi({ example: "Food" }),
-  description: z
-    .string()
-    .min(1)
-    .max(100)
-    .describe("The description of the expense")
-    .openapi({ example: "Grocery shopping" }),
-});
+import { errorSchema } from "../schema/error";
+import { expenseSchema, totalsSchema } from "../schema/expense";
 
 export const expenseRoute = new OpenAPIHono()
   .openapi(

@@ -1,21 +1,7 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { kindeClient, sessionManager, userMiddleware } from "../kinde";
-
-const errorSchema = z.object({
-  message: z
-    .string()
-    .describe("Error message")
-    .openapi({ example: "Some error message" }),
-});
-
-const userSchema = z.object({
-  id: z.string().openapi({ example: "kp_913fe22e037e46bd9bb3" }),
-  name: z.string().openapi({ example: "Jane Doe" }),
-  email: z.string().email().openapi({ example: "email@test.com" }),
-  picture: z.string().nullable().openapi({ example: "https://test/img.jpg" }),
-});
-
-export type User = z.infer<typeof userSchema>;
+import { errorSchema } from "../schema/error";
+import { userSchema } from "../schema/user";
 
 export const authRoute = new OpenAPIHono()
   .openapi(
