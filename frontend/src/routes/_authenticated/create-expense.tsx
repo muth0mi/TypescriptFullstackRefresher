@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createExpense, expensesQueryOptions } from "@/lib/api";
 import { expenseSchema } from "@backend/schema/expense";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Calendar } from "@/components/ui/calendar";
 import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/create-expense")({
   component: CreateExpense,
@@ -24,12 +25,19 @@ function CreateExpense() {
     },
     onSubmit: async ({ value }) => {
       await queryClient.ensureQueryData(expensesQueryOptions);
-      const expense = await createExpense(value);
-      queryClient.setQueryData(expensesQueryOptions.queryKey, (prev) => [
-        expense,
-        ...(prev ?? []),
-      ]);
-      navigate({ to: "/expenses" });
+      try {
+        const expense = await createExpense(value);
+        queryClient.setQueryData(expensesQueryOptions.queryKey, (prev) => [
+          ...(prev ?? []),
+          expense,
+        ]);
+        toast.success("Created expense");
+        navigate({ to: "/expenses" });
+      } catch (e) {
+        if (e instanceof Error) {
+          toast.error("Failed to create expense", { description: e?.message });
+        }
+      }
     },
   });
 
