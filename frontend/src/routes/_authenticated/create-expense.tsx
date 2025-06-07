@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
+import { expenseSchema } from "@backend/schema/expense";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
@@ -15,7 +16,7 @@ function CreateExpense() {
     defaultValues: {
       category: "",
       description: "",
-      amount: 0,
+      amount: "",
     },
     onSubmit: async ({ value }) => {
       const res = await api.expense.$post({ json: value });
@@ -39,19 +40,7 @@ function CreateExpense() {
         <div className="grid w-full max-w-sm items-center gap-3">
           <form.Field
             name="category"
-            validators={{
-              onChange: ({ value }) =>
-                !value
-                  ? "Category is required"
-                  : value.length < 3
-                    ? "Category must be at least 3 characters"
-                    : undefined,
-              onChangeAsyncDebounceMs: 500,
-              onChangeAsync: async ({ value }) => {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                return value.includes("error") && 'No "error" allowed';
-              },
-            }}
+            validators={{ onChange: expenseSchema.shape.category }}
             children={(field) => (
               <>
                 <Label htmlFor={field.name}>Category</Label>
@@ -62,10 +51,11 @@ function CreateExpense() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.isTouched && !field.state.meta.isValid && (
-                  <em>{field.state.meta.errors.join(", ")}</em>
+                {field.state.meta.errors && (
+                  <em>
+                    {field.state.meta.errors.map((e) => e?.message).join(", ")}
+                  </em>
                 )}
-                {field.state.meta.isValidating ? "Validating..." : null}
               </>
             )}
           />
@@ -74,19 +64,7 @@ function CreateExpense() {
         <div className="grid w-full max-w-sm items-center gap-3">
           <form.Field
             name="description"
-            validators={{
-              onChange: ({ value }) =>
-                !value
-                  ? "Description is required"
-                  : value.length < 3
-                    ? "Description must be at least 3 characters"
-                    : undefined,
-              onChangeAsyncDebounceMs: 500,
-              onChangeAsync: async ({ value }) => {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                return value.includes("error") && 'No "error" allowed';
-              },
-            }}
+            validators={{ onChange: expenseSchema.shape.description }}
             children={(field) => (
               <>
                 <Label htmlFor={field.name}>Description</Label>
@@ -97,10 +75,11 @@ function CreateExpense() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.isTouched && !field.state.meta.isValid && (
-                  <em>{field.state.meta.errors.join(", ")}</em>
+                {field.state.meta.errors && (
+                  <em>
+                    {field.state.meta.errors.map((e) => e?.message).join(", ")}
+                  </em>
                 )}
-                {field.state.meta.isValidating ? "Validating..." : null}{" "}
               </>
             )}
           />
@@ -109,19 +88,7 @@ function CreateExpense() {
         <div className="grid w-full max-w-sm items-center gap-3">
           <form.Field
             name="amount"
-            validators={{
-              onChange: ({ value }) =>
-                !value
-                  ? "Amount is required"
-                  : value < 0
-                    ? "Amount must be positive"
-                    : undefined,
-              onChangeAsyncDebounceMs: 500,
-              onChangeAsync: async ({ value }) => {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                return !value && 'No "error" allowed';
-              },
-            }}
+            validators={{ onChange: expenseSchema.shape.amount }}
             children={(field) => (
               <>
                 <Label htmlFor={field.name}>Amount</Label>
@@ -130,12 +97,13 @@ function CreateExpense() {
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {field.state.meta.isTouched && !field.state.meta.isValid && (
-                  <em>{field.state.meta.errors.join(", ")}</em>
+                {field.state.meta.errors && (
+                  <em>
+                    {field.state.meta.errors.map((e) => e?.message).join(", ")}
+                  </em>
                 )}
-                {field.state.meta.isValidating ? "Validating..." : null}{" "}
               </>
             )}
           />
