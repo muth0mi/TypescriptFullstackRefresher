@@ -39,3 +39,8 @@ export async function createExpense(value: CreateExpenseInput) {
   if (!res.ok) throw new Error("Failed to create expense");
   return await res.json();
 }
+
+export async function deleteExpense(id: string) {
+  const res = await api.expense[":id"].$delete({ param: { id: id } });
+  if (!res.ok) throw new Error("Failed to delete expense");
+}

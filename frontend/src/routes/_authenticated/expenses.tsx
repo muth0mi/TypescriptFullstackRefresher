@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -8,16 +9,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { expensesQueryOptions } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { expensesQueryOptions, deleteExpense } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Loader, Trash } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
 });
 
 function Expenses() {
+  const queryClient = useQueryClient();
   const { isFetching, error, data } = useQuery(expensesQueryOptions);
+  const mutation = useMutation({
+    mutationFn: deleteExpense,
+    onError: (error) => {
+      toast.error("Failed to delete expense", { description: error.message });
+    },
+    onSuccess: (_, variables) => {
+      toast.success("Expense deleted successfully");
+      queryClient.setQueryData(expensesQueryOptions.queryKey, (prev) =>
+        prev!.filter((expense) => expense.id !== variables),
+      );
+    },
+  });
 
   return (
     <div className="space-y-4">
@@ -32,6 +48,7 @@ function Expenses() {
             <TableHead>Description</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="text-right">Amount</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,6 +72,9 @@ function Expenses() {
                   <TableCell className="text-right">
                     <Skeleton className="h-4" />
                   </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4" />
+                  </TableCell>
                 </TableRow>
               ))
           ) : error ? (
@@ -71,6 +91,22 @@ function Expenses() {
                 <TableCell>{expense.description}</TableCell>
                 <TableCell>{expense.date}</TableCell>
                 <TableCell className="text-right">{expense.amount}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={
+                      mutation.variables === expense.id && mutation.isPending
+                    }
+                    onClick={() => mutation.mutate(expense.id)}
+                  >
+                    {mutation.variables === expense.id && mutation.isPending ? (
+                      <Loader className="h-4 w-4" />
+                    ) : (
+                      <Trash className="h-4 w-4 text-destructive" />
+                    )}
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           )}
