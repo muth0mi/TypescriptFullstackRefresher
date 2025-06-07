@@ -12,11 +12,13 @@ services:
       - POSTGRES_DB=${DATABASE_NAME:-app-db}
       - POSTGRES_USER=${DATABASE_USER:-user}
       - POSTGRES_PASSWORD=${DATABASE_PASS:-1234}
+    restart: unless-stopped
   app:
     build: .
     ports:
       - 3000:3000
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgres://user:1234@postgres/app-db}
+    restart: unless-stopped
     depends_on:
       - postgres
