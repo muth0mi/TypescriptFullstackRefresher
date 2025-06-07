@@ -1,7 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { and, eq, sum } from "drizzle-orm";
 import { db } from "../db";
-import { expenseTable } from "../db/schema";
+import { expenseTable } from "../db/schema/expense";
 import { userMiddleware } from "../kinde";
 
 const errorSchema = z.object({
