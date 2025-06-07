@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api";
+import { expensesQueryOptions } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -16,17 +16,8 @@ export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
 });
 
-async function fetchExpenses() {
-  const res = await api.expense.$get();
-  if (!res.ok) throw new Error("Failed to fetch expenses");
-  return await res.json();
-}
-
 function Expenses() {
-  const { isFetching, error, data } = useQuery({
-    queryKey: ["expenses"],
-    queryFn: fetchExpenses,
-  });
+  const { isFetching, error, data } = useQuery(expensesQueryOptions);
 
   return (
     <div className="space-y-4">
