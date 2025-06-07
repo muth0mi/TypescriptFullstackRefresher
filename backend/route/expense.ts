@@ -61,12 +61,7 @@ export const expenseRoute = new OpenAPIHono()
       const user = c.var.user;
       const expense = await db
         .insert(expenseTable)
-        .values({
-          userId: user.id,
-          amount: `${data.amount}`,
-          category: data.category,
-          description: data.description,
-        })
+        .values({ ...data, userId: user.id })
         .returning()
         .then((res) => res[0])
         .then((expense) =>
