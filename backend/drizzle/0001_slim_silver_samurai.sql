@@ -1,0 +1,1 @@
+ALTER TABLE "expenses" RENAME COLUMN "userId" TO "user_id";

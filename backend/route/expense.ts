@@ -1,4 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { and, eq, sum } from "drizzle-orm";
+import { db } from "../db";
+import { expenseTable } from "../db/schema";
 import { userMiddleware } from "../kinde";
 
 const errorSchema = z.object({
@@ -41,17 +44,6 @@ const expenseSchema = z.object({
     .openapi({ example: "Grocery shopping" }),
 });
 
-type Expense = z.infer<typeof expenseSchema>;
-
-const expenses: Expense[] = [
-  {
-    id: "982cd8c7-16ae-42b7-9d07-49aff7d4c17e",
-    amount: 100,
-    category: "Food",
-    description: "Grocery shopping",
-  },
-];
-
 export const expenseRoute = new OpenAPIHono()
   .openapi(
     createRoute({
@@ -66,9 +58,15 @@ export const expenseRoute = new OpenAPIHono()
         },
       },
     }),
-    (c) => {
-      const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-      return c.json({ expenses: total }, 200);
+    async (c) => {
+      const user = c.var.user;
+      const totals = await db
+        .select({ expenses: sum(expenseTable.amount) })
+        .from(expenseTable)
+        .where(eq(expenseTable.userId, user.id))
+        .then((res) => res[0])
+        .then((totals) => ({ expenses: Number(totals?.expenses) }));
+      return c.json(totals, 200);
     },
   )
   .openapi(
@@ -90,12 +88,38 @@ export const expenseRoute = new OpenAPIHono()
           description: "Expense Created Successfully",
           content: { "application/json": { schema: expenseSchema } },
         },
+        500: {
+          description: "Expense Not Created",
+          content: { "application/json": { schema: errorSchema } },
+        },
       },
     }),
-    (c) => {
+    async (c) => {
       const data = c.req.valid("json");
-      const expense = { id: expenses.length.toString(), ...data };
-      expenses.push(expense);
+      const user = c.var.user;
+      const expense = await db
+        .insert(expenseTable)
+        .values({
+          userId: user.id,
+          amount: `${data.amount}`,
+          category: data.category,
+          description: data.description,
+        })
+        .returning()
+        .then((res) => res[0])
+        .then((expense) =>
+          expense
+            ? {
+                id: expense.id,
+                amount: Number(expense.amount),
+                category: expense.category,
+                description: expense.description,
+              }
+            : null,
+        );
+      if (!expense) {
+        return c.json({ message: "Failed to create expense" }, 500);
+      }
       return c.json(expense, 201);
     },
   )
@@ -112,7 +136,20 @@ export const expenseRoute = new OpenAPIHono()
         },
       },
     }),
-    (c) => {
+    async (c) => {
+      const user = c.var.user;
+      const expenses = await db
+        .select()
+        .from(expenseTable)
+        .where(eq(expenseTable.userId, user.id))
+        .then((res) =>
+          res.map((r) => ({
+            id: r.id,
+            amount: Number(r.amount),
+            category: r.category,
+            description: r.description,
+          })),
+        );
       return c.json(expenses, 200);
     },
   )
@@ -136,9 +173,24 @@ export const expenseRoute = new OpenAPIHono()
         },
       },
     }),
-    (c) => {
+    async (c) => {
       const { id } = c.req.param();
-      const expense = expenses.find((e) => e.id === id);
+      const user = c.var.user;
+      const expense = await db
+        .select()
+        .from(expenseTable)
+        .where(and(eq(expenseTable.userId, user.id), eq(expenseTable.id, id)))
+        .then((res) => res[0])
+        .then((expense) =>
+          expense
+            ? {
+                id: expense.id,
+                amount: Number(expense.amount),
+                category: expense.category,
+                description: expense.description,
+              }
+            : null,
+        );
       if (!expense) {
         return c.json({ message: "Expense not found" }, 404);
       }
@@ -164,13 +216,17 @@ export const expenseRoute = new OpenAPIHono()
         },
       },
     }),
-    (c) => {
+    async (c) => {
       const { id } = c.req.param();
-      const index = expenses.findIndex((e) => e.id === id);
-      if (index === -1) {
+      const user = c.var.user;
+      const expense = await db
+        .delete(expenseTable)
+        .where(and(eq(expenseTable.userId, user.id), eq(expenseTable.id, id)))
+        .returning()
+        .then((res) => res[0]);
+      if (!expense) {
         return c.json({ message: "Expense not found" }, 404);
       }
-      expenses.splice(index, 1);
       return c.body(null, 204);
     },
   );
