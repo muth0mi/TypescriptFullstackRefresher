@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { and, eq, sum } from "drizzle-orm";
+import { and, eq, sum, count } from "drizzle-orm";
 import { db } from "../db";
 import { expenseTable } from "../db/schema/expense";
 import { userMiddleware } from "../kinde";
@@ -23,11 +23,17 @@ export const expenseRoute = new OpenAPIHono()
     async (c) => {
       const user = c.var.user;
       const totals = await db
-        .select({ expenses: sum(expenseTable.amount) })
+        .select({
+          expenses: count(expenseTable),
+          expenditure: sum(expenseTable.amount),
+        })
         .from(expenseTable)
         .where(eq(expenseTable.createdBy, user.id))
         .then((res) => res[0])
-        .then((totals) => ({ expenses: Number(totals?.expenses) }));
+        .then((totals) => ({
+          expenses: Number(totals?.expenses),
+          expenditure: totals?.expenditure,
+        }));
       return c.json(totals, 200);
     },
   )

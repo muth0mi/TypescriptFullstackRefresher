@@ -5,7 +5,11 @@ export const totalsSchema = z.object({
     .number()
     .describe("Total expenses")
     .positive()
-    .openapi({ example: 1100 }),
+    .openapi({ example: 3 }),
+  expenditure: z
+    .string()
+    .describe("Total expenditure")
+    .openapi({ example: "1100.40" }),
 });
 
 export const expenseSchema = z.object({
