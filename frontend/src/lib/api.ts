@@ -1,6 +1,8 @@
 import type { ApiRoutes } from "@backend/app";
 import { hc } from "hono/client";
 import { queryOptions } from "@tanstack/react-query";
+import { expenseSchema } from "@backend/schema/expense";
+import { z } from "zod";
 
 const client = hc<ApiRoutes>("/");
 
@@ -11,6 +13,7 @@ async function getProfile() {
   if (!res.ok) throw new Error("Failed to fetch profile");
   return await res.json();
 }
+
 export const userQueryOptions = queryOptions({
   queryKey: ["profile"],
   queryFn: getProfile,
@@ -22,18 +25,16 @@ async function fetchExpenses() {
   if (!res.ok) throw new Error("Failed to fetch expenses");
   return await res.json();
 }
+
 export const expensesQueryOptions = queryOptions({
   queryKey: ["expenses"],
   queryFn: fetchExpenses,
   staleTime: Infinity,
 });
 
-export async function createExpense(value: {
-  category: string;
-  description: string;
-  amount: string;
-  date: string;
-}) {
+export const createExpenseSchema = expenseSchema.omit({ id: true });
+type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
+export async function createExpense(value: CreateExpenseInput) {
   const res = await api.expense.$post({ json: value });
   if (!res.ok) throw new Error("Failed to create expense");
   return await res.json();
