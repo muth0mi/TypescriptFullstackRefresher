@@ -73,7 +73,7 @@ export const expenseRoute = new OpenAPIHono()
           expense
             ? {
                 id: expense.id,
-                amount: Number(expense.amount),
+                amount: expense.amount,
                 category: expense.category,
                 description: expense.description,
               }
@@ -107,7 +107,7 @@ export const expenseRoute = new OpenAPIHono()
         .then((res) =>
           res.map((r) => ({
             id: r.id,
-            amount: Number(r.amount),
+            amount: r.amount,
             category: r.category,
             description: r.description,
           })),
@@ -147,7 +147,7 @@ export const expenseRoute = new OpenAPIHono()
           expense
             ? {
                 id: expense.id,
-                amount: Number(expense.amount),
+                amount: expense.amount,
                 category: expense.category,
                 description: expense.description,
               }
