@@ -26,20 +26,34 @@ function Index() {
   });
 
   return (
-    <Card className="w-full max-w-sm mx-auto">
-      <CardHeader>
-        <CardTitle>Total Spent</CardTitle>
-        <CardDescription> The total amount spent on expenses</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isFetching ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p className="text-destructive">{error.message}</p>
-        ) : (
-          <p>{data?.expenses}</p>
-        )}
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold"> Summary</h2>
+
+      {isFetching ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-destructive">{error.message}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="w-full max-w-sm mx-auto">
+            <CardHeader>
+              <CardTitle>Expenses</CardTitle>
+              <CardDescription>The total number of expenses</CardDescription>
+            </CardHeader>
+            <CardContent>{data?.expenses}</CardContent>
+          </Card>
+
+          <Card className="w-full max-w-sm mx-auto">
+            <CardHeader>
+              <CardTitle>Expenditure</CardTitle>
+              <CardDescription>
+                The total amount spent on expenses
+              </CardDescription>
+            </CardHeader>
+            <CardContent>{data?.expenditure}</CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
   );
 }

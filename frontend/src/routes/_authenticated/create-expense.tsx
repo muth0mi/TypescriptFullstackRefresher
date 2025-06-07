@@ -28,11 +28,11 @@ function CreateExpense() {
   });
 
   return (
-    <div>
-      <h2>Create Expense</h2>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Create Expense</h2>
 
       <form
-        className="max-w-xl m-auto flex flex-col space-y-4"
+        className="flex flex-col space-y-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();

@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { userQueryOptions } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -17,12 +18,18 @@ function Profile() {
       ) : error ? (
         <p className="text-destructive">{error.message}</p>
       ) : (
-        <div className="space-y-2">
-          <Button variant="destructive">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Avatar>
+              {data?.picture && <AvatarImage src={data.picture} />}
+              <AvatarFallback>{data?.name ?? "USR"}</AvatarFallback>
+            </Avatar>
+            <p>{data?.name}</p>
+          </div>
+
+          <Button asChild variant="destructive">
             <a href="/api/auth/logout">Logout</a>
           </Button>
-          <p>{data?.name}</p>
-          <p>{data?.email}</p>
         </div>
       )}
     </div>
