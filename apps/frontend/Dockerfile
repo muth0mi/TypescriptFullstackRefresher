@@ -3,21 +3,23 @@ WORKDIR /app
 
 # Dependencies
 FROM base AS deps
-COPY package.json ./
-RUN bun install --frozen-lockfile --production
+COPY package.json bun.lock ./
+COPY apps/frontend/package.json ./apps/frontend/
+COPY apps/backend/package.json ./apps/backend/
+COPY packages/shared/package.json ./packages/shared/
+RUN bun install
 
-# Build stage
-FROM base AS build
-COPY package.json ./
-RUN bun install --frozen-lockfile
-COPY . .
+# Build
+FROM deps AS build
+COPY apps/frontend/ ./apps/frontend/
+COPY apps/backend/ ./apps/backend/
+COPY packages/shared/ ./packages/shared/
+WORKDIR /app/apps/frontend
 RUN bun run build
 
 # Production
 FROM oven/bun:alpine
 WORKDIR /app
-RUN bun install -g serve
-RUN apk add --no-cache curl
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/apps/frontend/dist .
 EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["bunx", "serve", "-s", "./", "-l", "3000"]

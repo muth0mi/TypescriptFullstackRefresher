@@ -20,8 +20,8 @@ services:
       - app-network
   backend:
     build:
-      context: ./apps/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/backend/Dockerfile
     ports:
       - "3000:3000"
     env_file: .env
@@ -30,7 +30,15 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "-q",
+          "--spider",
+          "--tries=1",
+          "http://localhost:3000/api/doc",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,17 +47,18 @@ services:
       - app-network
   frontend:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     ports:
-      - "3001:3000"
+      - "5173:3000"
     env_file: .env
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test:
+        ["CMD", "wget", "-q", "--spider", "--tries=1", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
