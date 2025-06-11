@@ -142,7 +142,11 @@ services:
 
 ### Health Checks
 
-All services include built-in health checks:
+All services include health checks managed by Docker Compose:
+
+- **PostgreSQL**: Uses `pg_isready` to check database availability
+- **Backend**: Checks `/health` endpoint with curl
+- **Frontend**: Checks if serve is responding with curl
 
 ```bash
 # Check all services health
@@ -150,6 +154,10 @@ docker-compose ps
 
 # View health status
 docker inspect --format='{{json .State.Health}}' <container-name>
+
+# Health checks enable proper service dependencies
+# Backend waits for PostgreSQL to be healthy
+# Frontend waits for Backend to be healthy
 ```
 
 ### Logs

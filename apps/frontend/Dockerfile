@@ -17,7 +17,7 @@ RUN bun run build
 FROM oven/bun:alpine
 WORKDIR /app
 RUN bun install -g serve
+RUN apk add --no-cache curl
 COPY --from=build /app/dist ./dist
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD curl -f http://localhost:3000 || exit 1
 CMD ["serve", "-s", "dist", "-l", "3000"]
