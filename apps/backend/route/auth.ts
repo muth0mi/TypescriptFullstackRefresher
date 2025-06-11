@@ -1,6 +1,6 @@
+import { errorSchema, userSchema } from "@app/shared";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { kindeClient, sessionManager, userMiddleware } from "../kinde";
-import { errorSchema, userSchema } from "../schema";
 
 export const authRoute = new OpenAPIHono()
   .openapi(
