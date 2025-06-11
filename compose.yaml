@@ -1,4 +1,4 @@
-name: ExpenseTracker
+name: expense-tracker
 volumes:
   db:
 services:
