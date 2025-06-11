@@ -8,8 +8,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@hono/zod-openapi": "^0.19.8",
-    "zod": "^3.25.51"
+    "@hono/zod-openapi": "^0.19.8"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

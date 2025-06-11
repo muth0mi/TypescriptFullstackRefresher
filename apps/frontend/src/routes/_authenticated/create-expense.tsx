@@ -19,8 +19,7 @@ function CreateExpense() {
   const form = useForm({
     validators: { onChange: expenseSchema.omit({ id: true }) },
     defaultValues: {
-      category: "",
-      description: "",
+      title: "",
       amount: "",
       date: new Date().toISOString(),
     },
@@ -55,31 +54,10 @@ function CreateExpense() {
         }}
       >
         <form.Field
-          name="category"
+          name="title"
           children={(field) => (
             <div className="grid gap-3">
-              <Label htmlFor={field.name}>Category</Label>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-              {field.state.meta.errors && (
-                <em>
-                  {field.state.meta.errors.map((e) => e?.message).join(", ")}
-                </em>
-              )}
-            </div>
-          )}
-        />
-
-        <form.Field
-          name="description"
-          children={(field) => (
-            <div className="grid gap-3">
-              <Label htmlFor={field.name}>Description</Label>
+              <Label htmlFor={field.name}>Title</Label>
               <Input
                 id={field.name}
                 name={field.name}
