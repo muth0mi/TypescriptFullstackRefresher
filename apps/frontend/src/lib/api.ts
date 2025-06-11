@@ -1,5 +1,5 @@
-import type { ApiRoutes } from "@backend/app";
-import { expenseSchema } from "@backend/schema/expense";
+import type { ApiRoutes } from "@app/api/app";
+import { expenseSchema } from "@app/api/schema";
 import { queryOptions } from "@tanstack/react-query";
 import { hc } from "hono/client";
 import { z } from "zod";

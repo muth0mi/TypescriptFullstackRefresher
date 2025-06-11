@@ -3,7 +3,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createExpense, expensesQueryOptions } from "@/lib/api";
-import { expenseSchema } from "@backend/schema/expense";
+import { expenseSchema } from "@app/api/schema";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

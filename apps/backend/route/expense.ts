@@ -1,10 +1,9 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { and, eq, sum, count } from "drizzle-orm";
+import { and, count, eq, sum } from "drizzle-orm";
 import { db } from "../db";
-import { expenseTable } from "../db/schema/expense";
+import { expenseTable } from "../db/schema";
 import { userMiddleware } from "../kinde";
-import { errorSchema } from "../schema/error";
-import { expenseSchema, totalsSchema } from "../schema/expense";
+import { errorSchema, expenseSchema, totalsSchema } from "../schema";
 
 export const expenseRoute = new OpenAPIHono()
   .openapi(
