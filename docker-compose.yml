@@ -16,8 +16,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
   backend:
     build:
       context: .
@@ -43,8 +41,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    networks:
-      - app-network
   frontend:
     build:
       context: .
@@ -62,11 +58,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 volumes:
   postgres_data:
     driver: local
-networks:
-  app-network:
-    driver: bridge

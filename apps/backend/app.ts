@@ -1,6 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
-import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { authRoute } from "./route/auth";
 import { expenseRoute } from "./route/expense";
@@ -38,10 +37,6 @@ app.get(
     theme: "saturn",
   }),
 );
-
-// Serve static files from the frontend directory
-app.use("*", serveStatic({ root: "../frontend/dist" }));
-app.get("*", serveStatic({ path: "../frontend/dist/index.html" }));
 
 export default app;
 export type ApiRoutes = typeof apiRoutes;
