@@ -12,6 +12,7 @@ export const expenseRoute = new OpenAPIHono()
       method: "get",
       middleware: [userMiddleware] as const,
       description: "Fetch Totals",
+      tags: ["Expense", "Totals"],
       responses: {
         200: {
           description: "Totals Fetched Successfully",
@@ -42,6 +43,7 @@ export const expenseRoute = new OpenAPIHono()
       method: "post",
       middleware: [userMiddleware] as const,
       description: "Create a New Expense",
+      tags: ["Expense"],
       request: {
         body: {
           required: true,
@@ -91,6 +93,7 @@ export const expenseRoute = new OpenAPIHono()
       method: "get",
       middleware: [userMiddleware] as const,
       description: "Fetch All Expenses",
+      tags: ["Expense"],
       responses: {
         200: {
           description: "Expenses Fetched Successfully",
@@ -121,6 +124,7 @@ export const expenseRoute = new OpenAPIHono()
       method: "get",
       middleware: [userMiddleware] as const,
       description: "Fetch Expense By ID",
+      tags: ["Expense"],
       request: {
         params: expenseSchema.pick({ id: true }),
       },
@@ -167,6 +171,7 @@ export const expenseRoute = new OpenAPIHono()
       method: "delete",
       middleware: [userMiddleware] as const,
       description: "Delete Expense By ID",
+      tags: ["Expense"],
       request: {
         params: expenseSchema.pick({ id: true }),
       },

@@ -8,6 +8,7 @@ export const authRoute = new OpenAPIHono()
       path: "/login",
       method: "get",
       description: "Log In",
+      tags: ["Auth"],
       responses: {
         302: {
           description: "Redirected To Login",
@@ -24,6 +25,7 @@ export const authRoute = new OpenAPIHono()
       path: "/register",
       method: "get",
       description: "Register",
+      tags: ["Auth"],
       responses: {
         302: {
           description: "Redirected To Registration",
@@ -40,6 +42,7 @@ export const authRoute = new OpenAPIHono()
       path: "/callback",
       method: "get",
       description: "Auth Callback",
+      tags: ["Auth"],
       responses: {
         302: {
           description: "Redirected To App",
@@ -57,6 +60,7 @@ export const authRoute = new OpenAPIHono()
       path: "/logout",
       method: "get",
       description: "Log Out",
+      tags: ["Auth"],
       responses: {
         302: {
           description: "Redirected To Logout",
@@ -74,6 +78,7 @@ export const authRoute = new OpenAPIHono()
       method: "get",
       middleware: [userMiddleware] as const,
       description: "Retrieve My Profile",
+      tags: ["Auth"],
       responses: {
         200: {
           description: "Fetched My Profile",
