@@ -32,9 +32,9 @@ export const expensesQueryOptions = queryOptions({
   staleTime: Infinity,
 });
 
-export const createExpenseSchema = expenseSchema.omit({ id: true });
-type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
-export async function createExpense(value: CreateExpenseInput) {
+export async function createExpense(
+  value: Omit<z.infer<typeof expenseSchema>, "id">,
+) {
   const res = await api.expense.$post({ json: value });
   if (!res.ok) throw new Error("Failed to create expense");
   return await res.json();

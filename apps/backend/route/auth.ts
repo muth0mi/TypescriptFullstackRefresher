@@ -39,6 +39,23 @@ export const authRoute = new OpenAPIHono()
   )
   .openapi(
     createRoute({
+      path: "/logout",
+      method: "get",
+      description: "Log Out",
+      tags: ["Auth"],
+      responses: {
+        302: {
+          description: "Redirected To Logout",
+        },
+      },
+    }),
+    async (c) => {
+      const logoutUrl = await kindeClient.logout(sessionManager(c));
+      return c.redirect(logoutUrl, 302);
+    },
+  )
+  .openapi(
+    createRoute({
       path: "/callback",
       method: "get",
       description: "Auth Callback",
@@ -53,23 +70,6 @@ export const authRoute = new OpenAPIHono()
       const url = new URL(c.req.url);
       await kindeClient.handleRedirectToApp(sessionManager(c), url);
       return c.redirect("/", 302);
-    },
-  )
-  .openapi(
-    createRoute({
-      path: "/logout",
-      method: "get",
-      description: "Log Out",
-      tags: ["Auth"],
-      responses: {
-        302: {
-          description: "Redirected To Logout",
-        },
-      },
-    }),
-    async (c) => {
-      const logoutUrl = await kindeClient.logout(sessionManager(c));
-      return c.redirect(logoutUrl, 302);
     },
   )
   .openapi(
