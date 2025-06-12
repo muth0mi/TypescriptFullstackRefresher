@@ -7,6 +7,3 @@
 
 # Environment variable files
 .env
-
-# Dependencies
-node_modules/
